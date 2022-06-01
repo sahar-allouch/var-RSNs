@@ -24,6 +24,9 @@ Cortical-level activity was generated using a flexible neural mass model framewo
 ## Running the code:
 - To obtain the connectivity matrices (for all conditions) of one epoch, you may run the function "run_one_epoch (s,e)". s (1-50) and e (1-4) are the subject and epoch ids.
 - To obtain the connectivity matrices of all subjects and epochs (over all conditions), run "run_all_epochs()".
+- To get the results quantification (Pearson correlation, closeness accuracy, edge contribution) run "get_results_quantif()".
+
+* Please check that the path to data is correct prior to running the codes
 
 ## References
 [1] Bensaid, Siouar, Julien Modolo, Isabelle Merlet, Fabrice Wendling, and Pascal Benquet. 2019. “COALIA: A Computational Model of Human EEG for Consciousness             Research.” Frontiers in Systems Neuroscience 13: 1–18.
