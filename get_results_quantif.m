@@ -1,4 +1,3 @@
-function [] = get_results_quantif()
 % results quantification
 clear all
 
@@ -8,7 +7,6 @@ conn        =   {'plv','aec','aec_orth','pli'};
 
 % gamma       =   [1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.1];
 gamma       =   [1];
-
 
 nb_subj     =   50;
 nb_epochs   =   4;
@@ -29,9 +27,10 @@ for n = 1:1%length(nets)
                     
                     % load ref connectivity matrices
                     load([nets{n} '/cmats/Subject_' num2str(s)  '/epoch_' num2str(e) '/cmat_ref_' conn{c}],'cmat_ref')
-                    
+                    p = 0.01;
+                    cmat_ref = threshold_proportional(cmat_ref,p);
                     % loop over electrodes configurations
-                    for m = 1:1%length(mont)
+                    for m = 1:length(mont)
                         
                         % condition set because aec_orth does not exists
                         % for 19, 32 and 64 electrodes
@@ -45,8 +44,16 @@ for n = 1:1%length(nets)
                             % load reconstructed network
                             load([nets{n} '/cmats/Subject_' num2str(s)  '/epoch_' num2str(e) '/cmat_est_' conn{c} '_' inv{iv} '_' mont{m} '_gamma_' num2str(gamma(g)) '.mat'],'cmat_est')
                             
+                            p = 0.01;
+%                             cmat_ref = threshold_proportional(cmat_ref,p);
+                            cmat_est = threshold_proportional(cmat_est,p);
+                            
                             % pearson correlation
-                            corr_mat = corrcoef(cmat_ref,cmat_est);
+                            nb_rois = size(cmat_ref,1);
+                            x = cmat_ref(triu(true(nb_rois),1));
+                            y = cmat_est(triu(true(nb_rois),1));
+%                             corr_mat = corrcoef(cmat_ref,cmat_est);
+                            corr_mat = corrcoef(x,y);
                             results.pearson_correlation = corr_mat(1,2);
                             
                             %                         % threshold based on strength values
@@ -79,7 +86,7 @@ for n = 1:1%length(nets)
                                 mkdir([nets{n} '/results/Subject_' num2str(s) '/epoch_' num2str(e)])
                             end
                             
-                            save([nets{n} '/results/Subject_' num2str(s)  '/epoch_' num2str(e) '/results_' conn{c} '_' inv{iv} '_' mont{m} '_gamma_' num2str(gamma(g)) '.mat'],'results');
+                            save([nets{n} '/results/Subject_' num2str(s)  '/epoch_' num2str(e) '/results_' conn{c} '_' inv{iv} '_' mont{m} '_gamma_' num2str(gamma(g)) '_thre_prop_1%_before_corr.mat'],'results');
                         end
                     end
                 end
@@ -88,6 +95,4 @@ for n = 1:1%length(nets)
     end
 end
 
-get_mean_edge_contribution()
-
-end
+% get_mean_edge_contribution()
